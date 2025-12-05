@@ -21,7 +21,8 @@ export default function ProtectedRoute({ children }) {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          color: "#fff",
+          color: "#e5e7eb",
+          background: "#020617",
         }}
       >
         Loading...
@@ -33,4 +34,3 @@ export default function ProtectedRoute({ children }) {
 
   return children;
 }
-
