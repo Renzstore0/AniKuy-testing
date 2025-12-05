@@ -1,12 +1,12 @@
 // context/AuthContext.js
 import { createContext, useContext, useEffect, useState } from "react";
+import { auth } from "../lib/firebase";
 import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { auth } from "../lib/firebase";
 
 const AuthContext = createContext(null);
 
@@ -16,9 +16,10 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser || null);
+      setUser(firebaseUser ?? null);
       setLoading(false);
     });
+
     return () => unsub();
   }, []);
 
@@ -30,16 +31,13 @@ export function AuthProvider({ children }) {
 
   const logout = () => signOut(auth);
 
+  const value = { user, loading, login, register, logout };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
   );
 }
 
 export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth harus dipakai di dalam AuthProvider");
-  return ctx;
+  return useContext(AuthContext);
 }
-
