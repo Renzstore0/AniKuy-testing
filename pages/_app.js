@@ -1,15 +1,16 @@
 // pages/_app.js
-import Head from "next/head";
-import Script from "next/script";
-import { useRouter } from "next/router";
+import "../global/styles/style.css"; // sekarang file-nya ada
 import { AuthProvider } from "../context/AuthContext";
 import ProtectedRoute from "../components/ProtectedRoute";
-import "../global/styles/style.css";
+import { useRouter } from "next/router";
+import Head from "next/head";
+import Script from "next/script";
 
-const protectedRoutes = ["/profile", "/my-list"];
+const protectedRoutes = ["/my-list"];
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
+
   const isProtected = protectedRoutes.some((path) =>
     router.pathname.startsWith(path)
   );
@@ -20,28 +21,16 @@ function MyApp({ Component, pageProps }) {
         <Head>
           <meta
             name="viewport"
-            content="width=device-width, initial-scale=1.0"
+            content="width=device-width, initial-scale=1, viewport-fit=cover"
           />
           <title>AniKuy</title>
-
-          {/* pakai CSS lama AniKuy, taruh di public/assets/css/style.css */}
-          <link rel="stylesheet" href="/assets/css/style.css" />
-
-          {/* favicon lama */}
-          <link
-            rel="icon"
-            type="image/png"
-            href="https://pomf2.lain.la/f/leu65s82.png"
-          />
-          <link
-            rel="shortcut icon"
-            type="image/png"
-            href="https://pomf2.lain.la/f/leu65s82.png"
-          />
         </Head>
 
-        {/* kalau masih mau pakai core.js lama, copy ke public/assets/js/core.js */}
-        {/* <Script src="/assets/js/core.js" strategy="beforeInteractive" /> */}
+        {/* script core bawaan situs */}
+        <Script
+          src="/assets/js/core.js"
+          strategy="afterInteractive"
+        />
 
         {isProtected ? (
           <ProtectedRoute>
@@ -56,5 +45,3 @@ function MyApp({ Component, pageProps }) {
 }
 
 export default MyApp;
-
-
