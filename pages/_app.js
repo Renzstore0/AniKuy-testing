@@ -4,7 +4,7 @@ import Script from "next/script";
 import { useRouter } from "next/router";
 import { AuthProvider } from "../context/AuthContext";
 import ProtectedRoute from "../components/ProtectedRoute";
-import "../styles/globals.css";
+import "../global/styles/style.css";
 
 const protectedRoutes = ["/profile", "/my-list"];
 
@@ -56,4 +56,5 @@ function MyApp({ Component, pageProps }) {
 }
 
 export default MyApp;
+
 
