@@ -47,7 +47,6 @@ async function loadAnimeDetail(slug) {
 
   const info = document.createElement("div");
   info.className = "detail-meta";
-  // Durasi DIHAPUS di sini
   info.innerHTML = `
     <div><span class="label">Rating:</span> ${d.rating || "N/A"}</div>
     <div><span class="label">Tipe:</span> ${d.type || "-"}</div>
@@ -221,7 +220,17 @@ async function loadAnimeDetail(slug) {
   document.title = `AniKuy - ${d.title}`;
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+// --- INIT HELPER ---
+
+function onReady(fn) {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", fn);
+  } else {
+    fn();
+  }
+}
+
+onReady(() => {
   if (!detailSlugFromUrl) {
     showToast("Slug anime tidak ditemukan");
     return;
