@@ -43,17 +43,27 @@ async function performSearch(query) {
   window.history.replaceState({}, "", newUrl);
 }
 
-if (searchForm && searchInput) {
-  searchForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    performSearch(searchInput.value);
-  });
+// --- INIT HELPER ---
+
+function onReady(fn) {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", fn);
+  } else {
+    fn();
+  }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+onReady(() => {
+  if (searchForm && searchInput) {
+    searchForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      performSearch(searchInput.value);
+    });
+  }
+
   const params = new URLSearchParams(window.location.search);
   const q = params.get("q");
-  if (q) {
+  if (q && searchInput) {
     searchInput.value = q;
     performSearch(q);
   }
