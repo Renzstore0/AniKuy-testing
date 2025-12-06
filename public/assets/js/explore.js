@@ -1,46 +1,95 @@
-// assets/js/search.js
+// assets/js/explore.js
 
-const searchForm = document.getElementById("searchForm");
-const searchInput = document.getElementById("searchInput");
-const searchResultInfo = document.getElementById("searchResultInfo");
-const searchResultGrid = document.getElementById("searchResultGrid");
+const exploreTabs = document.querySelectorAll(".explore-tab");
+const explorePanels = document.querySelectorAll(".explore-panel");
+const genreChipList = document.getElementById("genreChipList");
+const scheduleContainer = document.getElementById("scheduleContainer");
+const scheduleLoading = document.getElementById("scheduleLoading");
 
-async function performSearch(query) {
-  if (!searchResultGrid || !searchResultInfo) return;
-  if (!query) {
-    showToast("Masukkan kata kunci");
-    return;
-  }
+let scheduleLoaded = false;
 
-  const q = query.trim();
-  const enc = encodeURIComponent(q);
+// LOAD GENRES LIST (chip)
+async function loadGenres() {
+  if (!genreChipList) return;
 
   let json;
   try {
-    json = await apiGet(`/anime/search/${enc}`);
+    json = await apiGet("/anime/genre");
   } catch {
     return;
   }
   if (!json || json.status !== "success") return;
 
-  const list = json.data || [];
-  searchResultGrid.innerHTML = "";
-  searchResultInfo.textContent = `${list.length} hasil untuk "${q}"`;
-
-  list.forEach((a) => {
-    const card = createAnimeCard(a, {
-      rating: a.rating && a.rating !== "" ? a.rating : "N/A",
-      badgeBottom: a.status || "",
-      meta: (a.genres && a.genres.map((g) => g.name).join(", ")) || "",
+  genreChipList.innerHTML = "";
+  (json.data || []).forEach((g) => {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "genre-chip";
+    chip.textContent = g.name;
+    chip.addEventListener("click", () => {
+      if (!g.slug) return;
+      const url = `/anime/genre?slug=${encodeURIComponent(
+        g.slug
+      )}&name=${encodeURIComponent(g.name)}`;
+      window.location.href = url;
     });
-    searchResultGrid.appendChild(card);
+    genreChipList.appendChild(chip);
   });
+}
 
-  // simpan query di URL
-  const params = new URLSearchParams(window.location.search);
-  params.set("q", q);
-  const newUrl = `${window.location.pathname}?${params.toString()}`;
-  window.history.replaceState({}, "", newUrl);
+// LOAD SCHEDULE
+async function loadSchedule() {
+  if (!scheduleContainer || !scheduleLoading) return;
+
+  scheduleLoaded = true;
+  scheduleContainer.innerHTML = "";
+  scheduleLoading.classList.add("show");
+
+  try {
+    const json = await apiGet("/anime/schedule");
+    if (!json || json.status !== "success") return;
+
+    scheduleContainer.innerHTML = "";
+
+    (json.data || []).forEach((day) => {
+      const dayWrap = document.createElement("div");
+      dayWrap.className = "schedule-day";
+
+      const header = document.createElement("div");
+      header.className = "schedule-day-header";
+
+      const title = document.createElement("div");
+      title.className = "schedule-day-title";
+      title.textContent = day.day || "-";
+
+      const count = document.createElement("div");
+      count.className = "schedule-day-count";
+      const len = (day.anime_list || []).length;
+      count.textContent = len ? `${len} anime` : "Tidak ada anime";
+
+      header.appendChild(title);
+      header.appendChild(count);
+      dayWrap.appendChild(header);
+
+      const row = document.createElement("div");
+      row.className = "anime-row";
+
+      (day.anime_list || []).forEach((a) => {
+        const item = {
+          title: a.anime_name,
+          poster: a.poster,
+          slug: a.slug,
+        };
+        const card = createAnimeCard(item, {});
+        row.appendChild(card);
+      });
+
+      dayWrap.appendChild(row);
+      scheduleContainer.appendChild(dayWrap);
+    });
+  } finally {
+    scheduleLoading.classList.remove("show");
+  }
 }
 
 // --- INIT HELPER ---
@@ -54,17 +103,24 @@ function onReady(fn) {
 }
 
 onReady(() => {
-  if (searchForm && searchInput) {
-    searchForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      performSearch(searchInput.value);
-    });
-  }
+  // segmented tabs
+  exploreTabs.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const tab = btn.dataset.tab;
+      if (!tab) return;
 
-  const params = new URLSearchParams(window.location.search);
-  const q = params.get("q");
-  if (q && searchInput) {
-    searchInput.value = q;
-    performSearch(q);
-  }
+      exploreTabs.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      explorePanels.forEach((panel) => {
+        panel.classList.toggle("active", panel.dataset.tab === tab);
+      });
+
+      if (tab === "schedule" && !scheduleLoaded) {
+        loadSchedule();
+      }
+    });
+  });
+
+  loadGenres();
 });
