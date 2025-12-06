@@ -44,22 +44,32 @@ async function loadOngoingList(page = 1) {
   }
 }
 
-if (ongoingNextBtn) {
-  ongoingNextBtn.addEventListener("click", () => {
-    if (ongoingPage < ongoingLastPage) {
-      loadOngoingList(ongoingPage + 1);
-    }
-  });
+// --- INIT HELPER ---
+
+function onReady(fn) {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", fn);
+  } else {
+    fn();
+  }
 }
 
-if (ongoingPrevBtn) {
-  ongoingPrevBtn.addEventListener("click", () => {
-    if (ongoingPage > 1) {
-      loadOngoingList(ongoingPage - 1);
-    }
-  });
-}
+onReady(() => {
+  if (ongoingNextBtn) {
+    ongoingNextBtn.addEventListener("click", () => {
+      if (ongoingPage < ongoingLastPage) {
+        loadOngoingList(ongoingPage + 1);
+      }
+    });
+  }
 
-document.addEventListener("DOMContentLoaded", () => {
+  if (ongoingPrevBtn) {
+    ongoingPrevBtn.addEventListener("click", () => {
+      if (ongoingPage > 1) {
+        loadOngoingList(ongoingPage - 1);
+      }
+    });
+  }
+
   loadOngoingList(1);
 });
