@@ -55,23 +55,33 @@ async function loadGenreList(page = 1) {
   window.history.replaceState({}, "", newUrl);
 }
 
-if (genreNextBtn) {
-  genreNextBtn.addEventListener("click", () => {
-    if (currentGenrePage < currentGenreLastPage) {
-      loadGenreList(currentGenrePage + 1);
-    }
-  });
+// --- INIT HELPER ---
+
+function onReady(fn) {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", fn);
+  } else {
+    fn();
+  }
 }
 
-if (genrePrevBtn) {
-  genrePrevBtn.addEventListener("click", () => {
-    if (currentGenrePage > 1) {
-      loadGenreList(currentGenrePage - 1);
-    }
-  });
-}
+onReady(() => {
+  if (genreNextBtn) {
+    genreNextBtn.addEventListener("click", () => {
+      if (currentGenrePage < currentGenreLastPage) {
+        loadGenreList(currentGenrePage + 1);
+      }
+    });
+  }
 
-document.addEventListener("DOMContentLoaded", () => {
+  if (genrePrevBtn) {
+    genrePrevBtn.addEventListener("click", () => {
+      if (currentGenrePage > 1) {
+        loadGenreList(currentGenrePage - 1);
+      }
+    });
+  }
+
   if (genreTitle) {
     genreTitle.textContent = currentGenreName || "Genre";
   }
