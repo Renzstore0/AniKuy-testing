@@ -81,11 +81,7 @@ export default function AnimeDetailPage() {
             </svg>
             <span className="nav-label">Home</span>
           </a>
-          <a
-            className="nav-item active"
-            data-tab="explore"
-            href="/explore"
-          >
+          <a className="nav-item active" data-tab="explore" href="/explore">
             <svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
               <path
                 fill="currentColor"
