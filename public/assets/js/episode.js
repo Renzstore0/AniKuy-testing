@@ -389,67 +389,77 @@ async function loadEpisode(slug) {
   window.history.replaceState({}, "", newUrl);
 }
 
+// --- INIT HELPER ---
+
+function onReady(fn) {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", fn);
+  } else {
+    fn();
+  }
+}
+
 // ---------------- EVENT LISTENER ----------------
 
-// prev/next episode
-if (prevEpisodeBtn) {
-  prevEpisodeBtn.addEventListener("click", () => {
-    if (prevSlug) loadEpisode(prevSlug);
-  });
-}
+onReady(() => {
+  // prev/next episode
+  if (prevEpisodeBtn) {
+    prevEpisodeBtn.addEventListener("click", () => {
+      if (prevSlug) loadEpisode(prevSlug);
+    });
+  }
 
-if (nextEpisodeBtn) {
-  nextEpisodeBtn.addEventListener("click", () => {
-    if (nextSlug) loadEpisode(nextSlug);
-  });
-}
+  if (nextEpisodeBtn) {
+    nextEpisodeBtn.addEventListener("click", () => {
+      if (nextSlug) loadEpisode(nextSlug);
+    });
+  }
 
-// toolbar
-if (serverBtn) {
-  serverBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    if (!streamGroups || !streamGroups.length) return;
-    renderServerMenu();
-    const isOpen = serverMenu.classList.contains("show");
-    closeAllDropdowns();
-    if (!isOpen) serverMenu.classList.add("show");
-  });
-}
+  // toolbar
+  if (serverBtn) {
+    serverBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (!streamGroups || !streamGroups.length) return;
+      renderServerMenu();
+      const isOpen = serverMenu.classList.contains("show");
+      closeAllDropdowns();
+      if (!isOpen) serverMenu.classList.add("show");
+    });
+  }
 
-if (qualityBtn) {
-  qualityBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    if (!streamGroups || !streamGroups.length) return;
-    renderQualityMenu();
-    const isOpen = qualityMenu.classList.contains("show");
-    closeAllDropdowns();
-    if (!isOpen) qualityMenu.classList.add("show");
-  });
-}
+  if (qualityBtn) {
+    qualityBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (!streamGroups || !streamGroups.length) return;
+      renderQualityMenu();
+      const isOpen = qualityMenu.classList.contains("show");
+      closeAllDropdowns();
+      if (!isOpen) qualityMenu.classList.add("show");
+    });
+  }
 
-if (downloadBtn) {
-  downloadBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    if (!downloadData) {
-      showToast("Link unduhan belum tersedia");
-      return;
-    }
-    renderDownloadMenu();
-    const isOpen = downloadMenu.classList.contains("show");
-    closeAllDropdowns();
-    if (!isOpen) downloadMenu.classList.add("show");
-  });
-}
+  if (downloadBtn) {
+    downloadBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (!downloadData) {
+        showToast("Link unduhan belum tersedia");
+        return;
+      }
+      renderDownloadMenu();
+      const isOpen = downloadMenu.classList.contains("show");
+      closeAllDropdowns();
+      if (!isOpen) downloadMenu.classList.add("show");
+    });
+  }
 
-if (shareBtn) {
-  shareBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    handleShare();
-  });
-}
+  if (shareBtn) {
+    shareBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      handleShare();
+    });
+  }
 
-// initial load
-document.addEventListener("DOMContentLoaded", () => {
+  // initial load
   const params = new URLSearchParams(window.location.search);
   const slug = params.get("slug");
   if (!slug) {
