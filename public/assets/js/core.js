@@ -206,8 +206,18 @@ function createAnimeCard(item, opts = {}) {
   return card;
 }
 
+// --- INIT HELPER ---
+
+function onReady(fn) {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", fn);
+  } else {
+    fn();
+  }
+}
+
 // GLOBAL UI (back button, search, navbar scroll, anti copy)
-document.addEventListener("DOMContentLoaded", () => {
+onReady(() => {
   const currentTheme = initThemeFromStorage();
   bindThemeControls(currentTheme);
 
