@@ -76,7 +76,11 @@ async function loadTodayAnime() {
   const todayName = getTodayName();
   const todayObj = json.data.find((d) => d.day === todayName);
 
-  if (!todayObj || !Array.isArray(todayObj.anime_list) || !todayObj.anime_list.length) {
+  if (
+    !todayObj ||
+    !Array.isArray(todayObj.anime_list) ||
+    !todayObj.anime_list.length
+  ) {
     return;
   }
 
@@ -108,7 +112,8 @@ async function loadTodayAnime() {
   if (todayPrevBtn) {
     todayPrevBtn.addEventListener("click", () => {
       if (!todayAnimeList.length) return;
-      todayIndex = (todayIndex - 1 + todayAnimeList.length) % todayAnimeList.length;
+      todayIndex =
+        (todayIndex - 1 + todayAnimeList.length) % todayAnimeList.length;
       updateTodayHero();
     });
   }
@@ -163,23 +168,32 @@ async function loadHome() {
   });
 }
 
-// --- BUTTON "SEMUA" ---
+// --- INIT HELPER ---
 
-if (seeAllOngoingBtn) {
-  seeAllOngoingBtn.addEventListener("click", () => {
-    window.location.href = "/anime/ongoing";
-  });
-}
-
-if (seeAllCompleteBtn) {
-  seeAllCompleteBtn.addEventListener("click", () => {
-    window.location.href = "/anime/complete";
-  });
+function onReady(fn) {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", fn);
+  } else {
+    fn();
+  }
 }
 
 // --- INIT ---
 
-document.addEventListener("DOMContentLoaded", () => {
+onReady(() => {
+  // BUTTON "SEMUA"
+  if (seeAllOngoingBtn) {
+    seeAllOngoingBtn.addEventListener("click", () => {
+      window.location.href = "/anime/ongoing";
+    });
+  }
+
+  if (seeAllCompleteBtn) {
+    seeAllCompleteBtn.addEventListener("click", () => {
+      window.location.href = "/anime/complete";
+    });
+  }
+
   loadHome();
   loadTodayAnime();
 });
